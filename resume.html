@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Future Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: rgba(14, 20, 34, 0.82);
+      --panel-border: rgba(255,255,255,0.08);
+      --text: #eef3ff;
+      --muted: #9aa8c7;
+      --accent: #5ee7ff;
+      --accent-2: #7b61ff;
+      --success: #7effc7;
+      --shadow: 0 10px 35px rgba(0,0,0,0.35);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(94,231,255,0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(123,97,255,0.16), transparent 24%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 40px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .resume-shell {
+      position: relative;
+      z-index: 2;
+      max-width: 1400px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 28px;
+    }
+
+    .glass {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      padding: 32px;
+      position: sticky;
+      top: 32px;
+      height: fit-content;
+      overflow: hidden;
+    }
+
+    .sidebar::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(94,231,255,0.15), transparent 70%);
+      top: -80px;
+      right: -80px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 34px;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 800;
+      color: #071019;
+      margin-bottom: 18px;
+      box-shadow: 0 0 30px rgba(94,231,255,0.3);
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .bio {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      margin-left: 14px;
+      background: linear-gradient(90deg, rgba(94,231,255,0.6), transparent);
+    }
+
+    .contact-item,
+    .skill-chip,
+    .stat-card,
+    .timeline-card,
+    .project-card {
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .contact-item:hover,
+    .skill-chip:hover,
+    .timeline-card:hover,
+    .project-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(94,231,255,0.4);
+    }
+
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-item {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .contact-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .contact-value {
+      font-size: 0.95rem;
+      word-break: break-word;
+    }
+
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      font-size: 0.9rem;
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero {
+      padding: 38px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(94,231,255,0.08), transparent 35%, rgba(123,97,255,0.08));
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h2 {
+      font-size: 3.2rem;
+      line-height: 1;
+      font-family: 'Space Grotesk', sans-serif;
+      max-width: 700px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 780px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      padding: 12px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(94,231,255,0.35);
+      background: rgba(94,231,255,0.08);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-card {
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      padding: 22px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      padding: 30px;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: linear-gradient(var(--accent), transparent);
+    }
+
+    .timeline-card {
+      position: relative;
+      margin-left: 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      border-radius: 22px;
+      padding: 22px;
+    }
+
+    .timeline-card::before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(94,231,255,0.9);
+    }
+
+    .timeline-role {
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 1.05rem;
+    }
+
+    .timeline-company {
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .timeline-date {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .timeline-desc {
+      color: #d7def0;
+      line-height: 1.7;
+      font-size: 0.94rem;
+    }
+
+    .project-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .project-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      border-radius: 24px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(123,97,255,0.14), transparent 70%);
+      top: -60px;
+      right: -60px;
+    }
+
+    .project-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .project-description {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(94,231,255,0.08);
+      border: 1px solid rgba(94,231,255,0.2);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 24px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .glow {
+      position: fixed;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(94,231,255,0.18), transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+
+    @media (max-width: 1100px) {
+      .resume-shell,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        top: 0;
+      }
+
+      .hero h2 {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 18px;
+      }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" id="glow"></div>
+
+  <div class="resume-shell">
+    <aside class="sidebar glass">
+      <div class="profile">
+        <div class="avatar">YK</div>
+        <h1>Your Name</h1>
+        <div class="tagline">AI-Driven Product Builder</div>
+        <p class="bio">
+          Strategic thinker with a strong blend of technical execution, systems design,
+          creative problem solving, and future-focused product thinking.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Contact</div>
+
+        <div class="contact-list">
+          <div class="contact-item">
+            <div class="contact-label">Email</div>
+            <div class="contact-value">yourname@email.com</div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-label">Location</div>
+            <div class="contact-value">London, United Kingdom</div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-label">Portfolio</div>
+            <div class="contact-value">yourportfolio.dev</div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-label">LinkedIn</div>
+            <div class="contact-value">linkedin.com/in/yourname</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Core Skills</div>
+
+        <div class="skills-grid">
+          <div class="skill-chip">AI Systems</div>
+          <div class="skill-chip">Product Strategy</div>
+          <div class="skill-chip">Full Stack</div>
+          <div class="skill-chip">Automation</div>
+          <div class="skill-chip">Leadership</div>
+          <div class="skill-chip">UX Thinking</div>
+          <div class="skill-chip">Data Analysis</div>
+          <div class="skill-chip">Growth</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero glass">
+        <div class="hero-top">
+          <div>
+            <div class="section-title">Professional Summary</div>
+            <h2>
+              Designing systems, products, and experiences for the next decade.
+            </h2>
+          </div>
+
+          <div class="hero-badge">
+            Open to remote + global opportunities
+          </div>
+        </div>
+
+        <p>
+          I build scalable digital experiences that combine engineering, design, automation,
+          and strategic thinking. My work focuses on creating intelligent workflows,
+          high-performance products, and impactful user experiences that blend technical depth
+          with clear business outcomes.
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">8+</div>
+            <div class="stat-label">Years of Experience</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">20+</div>
+            <div class="stat-label">Products & Projects</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Curiosity & Iteration</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel glass">
+          <div class="section-title">Experience</div>
+
+          <div class="timeline">
+            <div class="timeline-card">
+              <div class="timeline-role">Senior Product & Systems Architect</div>
+              <div class="timeline-company">Future Labs</div>
+              <div class="timeline-date">2023 — Present</div>
+              <div class="timeline-desc">
+                Led development of AI-powered workflow systems, designed scalable automation
+                infrastructure, and coordinated cross-functional product execution.
+              </div>
+            </div>
+
+            <div class="timeline-card">
+              <div class="timeline-role">Creative Technologist</div>
+              <div class="timeline-company">Independent / Consulting</div>
+              <div class="timeline-date">2020 — 2023</div>
+              <div class="timeline-desc">
+                Built experimental interfaces, automation tools, dashboards, and modern web
+                experiences for startups and digital-first businesses.
+              </div>
+            </div>
+
+            <div class="timeline-card">
+              <div class="timeline-role">Frontend Engineer</div>
+              <div class="timeline-company">Next Horizon Studio</div>
+              <div class="timeline-date">2017 — 2020</div>
+              <div class="timeline-desc">
+                Developed responsive user interfaces, optimized performance pipelines,
+                and collaborated with design teams to deliver polished digital products.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel glass">
+          <div class="section-title">Featured Projects</div>
+
+          <div class="project-grid">
+            <div class="project-card">
+              <div class="project-title">AI Command Workspace</div>
+              <div class="project-description">
+                Designed a futuristic productivity platform integrating AI assistants,
+                workflow orchestration, and intelligent analytics.
+              </div>
+
+              <div class="project-tags">
+                <div class="tag">AI</div>
+                <div class="tag">Automation</div>
+                <div class="tag">UX</div>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-title">Realtime Insight Dashboard</div>
+              <div class="project-description">
+                Engineered a high-performance analytics experience for operational data,
+                predictive metrics, and live monitoring systems.
+              </div>
+
+              <div class="project-tags">
+                <div class="tag">Data</div>
+                <div class="tag">Frontend</div>
+                <div class="tag">Visualization</div>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-title">Adaptive Portfolio Engine</div>
+              <div class="project-description">
+                Built a modular personal branding platform with dynamic content rendering,
+                animated storytelling, and performance-focused architecture.
+              </div>
+
+              <div class="project-tags">
+                <div class="tag">Brand</div>
+                <div class="tag">Design</div>
+                <div class="tag">Performance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-note">
+        Designed with a futuristic glassmorphism-inspired interface • Fully editable single-file resume
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const glow = document.getElementById('glow');
+
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = `${e.clientX}px`;
+      glow.style.top = `${e.clientY}px`;
+    });
+
+    document.querySelectorAll('.glass, .timeline-card, .project-card, .skill-chip').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(94,231,255,0.12), rgba(255,255,255,0.03))`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.background = '';
+      });
+    });
+
+    // Optional: Easy edit mode in browser
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'e' && e.ctrlKey) {
+        document.body.contentEditable = document.body.contentEditable !== 'true';
+        alert('Edit mode toggled. You can now edit text directly on the page.');
+      }
+    });
+  </script>
+</body>
+</html>
