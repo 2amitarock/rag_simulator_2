@@ -3,362 +3,410 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RAG Simulator</title>
+
+<title>Interactive RAG Architecture Simulator</title>
 
 <style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-    }
 
-    body{
-        font-family: Inter, sans-serif;
-        background:#071018;
-        color:white;
-        overflow-x:hidden;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    body::before{
-        content:"";
-        position:fixed;
-        inset:0;
-        background:
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-        background-size:40px 40px;
-        z-index:-2;
-    }
+:root{
+    --bg:#071018;
+    --card:#0d1726;
+    --border:rgba(255,255,255,0.08);
+    --cyan:#00e5ff;
+    --purple:#8b5cf6;
+    --text:#f3f7ff;
+    --muted:#9db0c7;
+}
 
-    .glow{
-        position:fixed;
-        width:500px;
-        height:500px;
-        border-radius:50%;
-        background:rgba(0,255,255,0.07);
-        filter:blur(100px);
-        top:-100px;
-        left:-100px;
-        z-index:-1;
-    }
+body{
+    background:
+        radial-gradient(circle at top left, rgba(0,229,255,0.08), transparent 40%),
+        radial-gradient(circle at bottom right, rgba(139,92,246,0.1), transparent 40%),
+        var(--bg);
 
-    .container{
-        max-width:1400px;
-        margin:auto;
-        padding:30px;
-    }
+    color:var(--text);
+    font-family:Inter, sans-serif;
+    overflow-x:hidden;
+    min-height:100vh;
+}
 
-    .title{
-        text-align:center;
-        margin-bottom:30px;
-    }
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
 
-    .title h1{
-        font-size:3rem;
-        background:linear-gradient(to right,#00f0ff,#8b5cf6);
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
-    }
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
 
-    .title p{
-        color:#9db0c7;
-        margin-top:10px;
+    background-size:40px 40px;
+    z-index:-1;
+}
+
+.container{
+    max-width:1600px;
+    margin:auto;
+    padding:28px;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:28px;
+}
+
+.hero h1{
+    font-size:3.5rem;
+    background:linear-gradient(to right,var(--cyan),var(--purple));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+    color:var(--muted);
+    margin-top:14px;
+    font-size:1.05rem;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:400px 1fr;
+    gap:24px;
+}
+
+.panel{
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--border);
+    border-radius:28px;
+    backdrop-filter:blur(12px);
+    overflow:hidden;
+    box-shadow:0 0 30px rgba(0,0,0,0.25);
+}
+
+.sidebar{
+    padding:24px;
+    height:fit-content;
+    position:sticky;
+    top:20px;
+}
+
+.section{
+    margin-bottom:24px;
+}
+
+.section h2{
+    color:var(--cyan);
+    margin-bottom:14px;
+    font-size:1rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+textarea{
+    width:100%;
+    min-height:160px;
+    background:#08111b;
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:18px;
+    padding:18px;
+    color:white;
+    resize:none;
+    outline:none;
+    line-height:1.7;
+}
+
+button{
+    width:100%;
+    border:none;
+    cursor:pointer;
+    padding:16px;
+    border-radius:18px;
+    background:linear-gradient(135deg,var(--cyan),var(--purple));
+    color:white;
+    font-weight:700;
+    margin-top:18px;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(0,229,255,0.25);
+}
+
+.kb-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.kb-item{
+    background:#09121d;
+    padding:16px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,0.05);
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.kb-item:hover{
+    border-color:var(--cyan);
+    transform:translateY(-2px);
+}
+
+.kb-item.active{
+    border-color:var(--cyan);
+    box-shadow:0 0 20px rgba(0,229,255,0.15);
+}
+
+.kb-item h4{
+    margin-bottom:8px;
+}
+
+.kb-item p{
+    color:var(--muted);
+    line-height:1.6;
+    font-size:14px;
+}
+
+.main{
+    padding:24px;
+}
+
+.architecture{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+    margin-bottom:24px;
+}
+
+.node{
+    background:#09121d;
+    border-radius:24px;
+    border:1px solid rgba(255,255,255,0.06);
+    padding:20px;
+    text-align:center;
+    transition:0.4s;
+    position:relative;
+}
+
+.node.active{
+    border-color:var(--cyan);
+    box-shadow:0 0 30px rgba(0,229,255,0.18);
+    transform:translateY(-4px);
+}
+
+.node .icon{
+    font-size:2rem;
+    margin-bottom:10px;
+}
+
+.node p{
+    color:var(--muted);
+    font-size:14px;
+    margin-top:8px;
+    line-height:1.5;
+}
+
+.flow{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:#09121d;
+    border-radius:24px;
+    border:1px solid rgba(255,255,255,0.05);
+    padding:22px;
+}
+
+.card h3{
+    color:var(--cyan);
+    margin-bottom:18px;
+}
+
+.output{
+    min-height:200px;
+    line-height:1.8;
+    color:#d6e1f0;
+    white-space:pre-wrap;
+}
+
+.vector{
+    margin-top:12px;
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.vector span{
+    background:rgba(0,229,255,0.1);
+    color:var(--cyan);
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+}
+
+.score{
+    margin-top:10px;
+    color:var(--cyan);
+    font-size:13px;
+}
+
+.retrieved{
+    border-color:var(--cyan);
+    box-shadow:0 0 20px rgba(0,229,255,0.14);
+}
+
+.progress{
+    height:8px;
+    background:#09121d;
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:22px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(to right,var(--cyan),var(--purple));
+    transition:0.5s;
+}
+
+.typing{
+    border-right:2px solid var(--cyan);
+    animation:blink 0.8s infinite;
+}
+
+@keyframes blink{
+    50%{
+        border-color:transparent;
     }
+}
+
+@media(max-width:1200px){
 
     .layout{
-        display:grid;
-        grid-template-columns: 380px 1fr;
-        gap:24px;
+        grid-template-columns:1fr;
     }
 
-    .panel{
-        background:rgba(255,255,255,0.04);
-        border:1px solid rgba(255,255,255,0.08);
-        backdrop-filter: blur(14px);
-        border-radius:24px;
-        padding:24px;
-        box-shadow:0 0 30px rgba(0,255,255,0.08);
+    .architecture{
+        grid-template-columns:1fr 1fr;
     }
 
-    h2{
-        margin-bottom:18px;
-        color:#00f0ff;
-        font-size:1rem;
-        letter-spacing:1px;
-        text-transform:uppercase;
+    .flow{
+        grid-template-columns:1fr;
     }
 
-    textarea{
-        width:100%;
-        min-height:220px;
-        resize:none;
-        border:none;
-        outline:none;
-        border-radius:16px;
-        padding:18px;
-        background:#08131f;
-        color:white;
-        font-size:15px;
-        line-height:1.6;
-    }
+}
 
-    button{
-        width:100%;
-        margin-top:18px;
-        padding:16px;
-        border:none;
-        border-radius:16px;
-        background:linear-gradient(135deg,#00e0ff,#7c3aed);
-        color:white;
-        font-weight:700;
-        cursor:pointer;
-        transition:0.3s;
-        font-size:1rem;
-    }
-
-    button:hover{
-        transform:translateY(-3px);
-        box-shadow:0 10px 30px rgba(0,255,255,0.25);
-    }
-
-    .steps{
-        display:flex;
-        flex-direction:column;
-        gap:20px;
-    }
-
-    .step{
-        background:rgba(255,255,255,0.03);
-        border:1px solid rgba(255,255,255,0.05);
-        border-radius:20px;
-        overflow:hidden;
-        transition:0.3s;
-    }
-
-    .step-header{
-        padding:18px 22px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        cursor:pointer;
-        background:rgba(255,255,255,0.03);
-    }
-
-    .step-header h3{
-        font-size:1rem;
-    }
-
-    .badge{
-        background:#0f1725;
-        color:#00f0ff;
-        padding:6px 12px;
-        border-radius:999px;
-        font-size:12px;
-    }
-
-    .step-content{
-        padding:22px;
-        border-top:1px solid rgba(255,255,255,0.05);
-    }
-
-    .documents{
-        display:grid;
-        gap:12px;
-    }
-
-    .doc{
-        background:#08131f;
-        padding:16px;
-        border-radius:14px;
-        border:1px solid rgba(255,255,255,0.05);
-        transition:0.3s;
-    }
-
-    .doc:hover{
-        border-color:#00e0ff;
-        transform:translateY(-2px);
-    }
-
-    .retrieved{
-        border:1px solid #00e0ff;
-        box-shadow:0 0 20px rgba(0,255,255,0.15);
-    }
-
-    .score{
-        color:#00f0ff;
-        margin-top:10px;
-        font-size:13px;
-    }
-
-    .prompt-box{
-        background:#08131f;
-        border-radius:16px;
-        padding:20px;
-        line-height:1.7;
-        color:#c8d3e2;
-        white-space:pre-wrap;
-    }
-
-    .answer{
-        font-size:1rem;
-        line-height:1.8;
-        color:#dce6f4;
-    }
-
-    .pipeline{
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:24px;
-        gap:10px;
-        flex-wrap:wrap;
-    }
-
-    .pipeline-step{
-        flex:1;
-        min-width:140px;
-        padding:18px;
-        border-radius:18px;
-        text-align:center;
-        background:rgba(255,255,255,0.03);
-        border:1px solid rgba(255,255,255,0.06);
-        position:relative;
-    }
-
-    .pipeline-step.active{
-        border-color:#00f0ff;
-        box-shadow:0 0 25px rgba(0,255,255,0.15);
-    }
-
-    .pipeline-step span{
-        display:block;
-        margin-top:8px;
-        color:#9db0c7;
-        font-size:13px;
-    }
-
-    .typing{
-        border-right:2px solid #00f0ff;
-        animation:blink 0.8s infinite;
-    }
-
-    @keyframes blink{
-        50%{
-            border-color:transparent;
-        }
-    }
-
-    @media(max-width:1000px){
-        .layout{
-            grid-template-columns:1fr;
-        }
-    }
 </style>
 </head>
 
 <body>
 
-<div class="glow"></div>
-
 <div class="container">
 
-    <div class="title">
-        <h1>RAG Simulator</h1>
+    <div class="hero">
+        <h1>RAG Architecture Simulator</h1>
+
         <p>
-            Learn Retrieval-Augmented Generation visually by simulating every step
-            of the RAG pipeline.
+            Visualize embeddings, retrieval, vector search,
+            prompt augmentation, and grounded LLM generation.
         </p>
-    </div>
-
-    <div class="pipeline">
-        <div class="pipeline-step" id="pipe1">
-            📚
-            <span>Knowledge Base</span>
-        </div>
-
-        <div class="pipeline-step" id="pipe2">
-            🔍
-            <span>Retrieval</span>
-        </div>
-
-        <div class="pipeline-step" id="pipe3">
-            🧠
-            <span>Context Injection</span>
-        </div>
-
-        <div class="pipeline-step" id="pipe4">
-            ✨
-            <span>LLM Generation</span>
-        </div>
     </div>
 
     <div class="layout">
 
-        <div class="panel">
+        <div class="panel sidebar">
 
-            <h2>Ask a Question</h2>
+            <div class="section">
 
-            <textarea id="question">
-What is Retrieval-Augmented Generation and why is it useful?
-            </textarea>
+                <h2>User Query</h2>
 
-            <button onclick="runRAG()">
-                Run RAG Simulation
-            </button>
+                <textarea id="question">
+How does Retrieval-Augmented Generation reduce hallucinations?
+                </textarea>
+
+                <button onclick="runRAG()">
+                    Run Interactive RAG Pipeline
+                </button>
+
+            </div>
+
+            <div class="section">
+
+                <h2>Knowledge Base</h2>
+
+                <div class="kb-list" id="kbList"></div>
+
+            </div>
 
         </div>
 
-        <div class="steps">
+        <div class="panel main">
 
-            <div class="step">
-                <div class="step-header">
-                    <h3>Step 1 — Knowledge Base</h3>
-                    <div class="badge">Documents</div>
-                </div>
-
-                <div class="step-content">
-
-                    <div class="documents" id="knowledgeBase"></div>
-
-                </div>
+            <div class="progress">
+                <div class="progress-bar" id="progress"></div>
             </div>
 
-            <div class="step">
-                <div class="step-header">
-                    <h3>Step 2 — Retrieval</h3>
-                    <div class="badge">Vector Search</div>
+            <div class="architecture">
+
+                <div class="node" id="n1">
+                    <div class="icon">👤</div>
+                    <h3>User Query</h3>
+                    <p>Question enters system</p>
                 </div>
 
-                <div class="step-content">
-
-                    <div id="retrievalResults"></div>
-
+                <div class="node" id="n2">
+                    <div class="icon">🧬</div>
+                    <h3>Embedding</h3>
+                    <p>Convert query into vectors</p>
                 </div>
+
+                <div class="node" id="n3">
+                    <div class="icon">🔎</div>
+                    <h3>Retriever</h3>
+                    <p>Semantic vector search</p>
+                </div>
+
+                <div class="node" id="n4">
+                    <div class="icon">📦</div>
+                    <h3>Context Injection</h3>
+                    <p>Add retrieved docs to prompt</p>
+                </div>
+
+                <div class="node" id="n5">
+                    <div class="icon">✨</div>
+                    <h3>LLM Response</h3>
+                    <p>Generate grounded answer</p>
+                </div>
+
             </div>
 
-            <div class="step">
-                <div class="step-header">
-                    <h3>Step 3 — Prompt Augmentation</h3>
-                    <div class="badge">Context Added</div>
-                </div>
+            <div class="flow">
 
-                <div class="step-content">
+                <div class="card">
 
-                    <div class="prompt-box" id="promptBox"></div>
+                    <h3>Live Pipeline Output</h3>
+
+                    <div class="output" id="pipelineOutput"></div>
 
                 </div>
-            </div>
 
-            <div class="step">
-                <div class="step-header">
-                    <h3>Step 4 — LLM Response</h3>
-                    <div class="badge">Generated Answer</div>
-                </div>
+                <div class="card">
 
-                <div class="step-content">
+                    <h3>Generated Answer</h3>
 
-                    <div class="answer" id="answer"></div>
+                    <div class="output" id="finalAnswer"></div>
 
                 </div>
+
             </div>
 
         </div>
@@ -369,58 +417,58 @@ What is Retrieval-Augmented Generation and why is it useful?
 
 <script>
 
-const documents = [
+const knowledgeBase = [
 {
-    title:"Document 1",
-    content:"Retrieval-Augmented Generation (RAG) combines search systems with large language models."
+    title:"RAG Basics",
+    content:"Retrieval-Augmented Generation combines retrieval systems with large language models."
 },
 {
-    title:"Document 2",
-    content:"RAG retrieves relevant information from external data before generating a response."
+    title:"Hallucinations",
+    content:"Hallucinations happen when an LLM generates incorrect or fabricated information."
 },
 {
-    title:"Document 3",
-    content:"Traditional LLMs rely only on training data and may hallucinate information."
+    title:"Grounded Responses",
+    content:"RAG reduces hallucinations by grounding responses in retrieved external knowledge."
 },
 {
-    title:"Document 4",
-    content:"RAG improves factual accuracy by grounding responses using retrieved context."
+    title:"Embeddings",
+    content:"Embeddings convert text into numerical vectors representing semantic meaning."
 },
 {
-    title:"Document 5",
-    content:"Embeddings convert text into vectors so semantic similarity search can be performed."
+    title:"Vector Databases",
+    content:"Vector databases store embeddings and retrieve semantically similar documents."
 },
 {
-    title:"Document 6",
-    content:"Vector databases store embeddings and efficiently retrieve related information."
+    title:"Prompt Augmentation",
+    content:"Retrieved documents are injected into the LLM prompt as context before generation."
 }
 ];
 
-const knowledgeBase = document.getElementById("knowledgeBase");
+const kbList = document.getElementById("kbList");
 
-documents.forEach(doc => {
+knowledgeBase.forEach((doc,index)=>{
+
     const div = document.createElement("div");
-    div.className = "doc";
+
+    div.className = "kb-item";
 
     div.innerHTML = `
-        <strong>${doc.title}</strong>
-        <p style="margin-top:10px;color:#b7c6d8;line-height:1.6">
-            ${doc.content}
-        </p>
+        <h4>${doc.title}</h4>
+        <p>${doc.content}</p>
     `;
 
-    knowledgeBase.appendChild(div);
+    kbList.appendChild(div);
 });
 
-function similarity(question, content){
+function similarity(a,b){
 
-    const qWords = question.toLowerCase().split(" ");
-    const cWords = content.toLowerCase().split(" ");
+    const awords = a.toLowerCase().split(" ");
+    const bwords = b.toLowerCase().split(" ");
 
     let score = 0;
 
-    qWords.forEach(word=>{
-        if(cWords.includes(word)){
+    awords.forEach(word=>{
+        if(bwords.includes(word)){
             score++;
         }
     });
@@ -428,138 +476,169 @@ function similarity(question, content){
     return score;
 }
 
-async function runRAG(){
+function activateNode(index){
 
-    clearUI();
-
-    activatePipeline(1);
-
-    const question = document.getElementById("question").value;
-
-    await sleep(700);
-
-    activatePipeline(2);
-
-    const ranked = documents.map(doc=>({
-        ...doc,
-        score: similarity(question, doc.content)
-    }))
-    .sort((a,b)=>b.score-a.score);
-
-    const topDocs = ranked.slice(0,3);
-
-    const retrievalDiv = document.getElementById("retrievalResults");
-
-    topDocs.forEach((doc,index)=>{
-
-        setTimeout(()=>{
-
-            const div = document.createElement("div");
-
-            div.className = "doc retrieved";
-
-            div.innerHTML = `
-                <strong>${doc.title}</strong>
-                <p style="margin-top:10px;color:#b7c6d8;line-height:1.6">
-                    ${doc.content}
-                </p>
-
-                <div class="score">
-                    Similarity Score: ${doc.score}
-                </div>
-            `;
-
-            retrievalDiv.appendChild(div);
-
-        }, index * 500);
-
-    });
-
-    await sleep(2000);
-
-    activatePipeline(3);
-
-    const context = topDocs.map(d=>d.content).join("\\n");
-
-    const augmentedPrompt =
-`SYSTEM:
-You are a helpful AI assistant.
-
-RETRIEVED CONTEXT:
-${context}
-
-USER QUESTION:
-${question}
-
-INSTRUCTION:
-Generate a grounded answer using the retrieved context only.`;
-
-    typeText(
-        document.getElementById("promptBox"),
-        augmentedPrompt,
-        8
-    );
-
-    await sleep(4500);
-
-    activatePipeline(4);
-
-    const finalAnswer =
-`Retrieval-Augmented Generation (RAG) is a technique that improves LLM responses by retrieving relevant information from an external knowledge source before generation.
-
-In this simulation:
-• The system searched the knowledge base
-• Relevant documents were retrieved
-• Retrieved text was injected into the prompt
-• The LLM generated a grounded answer using that context
-
-RAG is useful because it improves factual accuracy, reduces hallucinations, and allows AI systems to use updated information beyond their training data.`;
-
-    typeText(
-        document.getElementById("answer"),
-        finalAnswer,
-        18
-    );
-}
-
-function activatePipeline(step){
-
-    for(let i=1;i<=4;i++){
-        document
-            .getElementById(`pipe${i}`)
-            .classList.remove("active");
+    for(let i=1;i<=5;i++){
+        document.getElementById(`n${i}`).classList.remove("active");
     }
 
-    document
-        .getElementById(`pipe${step}`)
-        .classList.add("active");
-}
+    document.getElementById(`n${index}`).classList.add("active");
 
-function clearUI(){
-
-    document.getElementById("retrievalResults").innerHTML = "";
-    document.getElementById("promptBox").innerHTML = "";
-    document.getElementById("answer").innerHTML = "";
+    document.getElementById("progress").style.width =
+        `${index * 20}%`;
 }
 
 function sleep(ms){
     return new Promise(resolve=>setTimeout(resolve,ms));
 }
 
-async function typeText(element, text, speed){
+async function typeText(el,text,speed=20){
 
-    element.innerHTML = "";
+    el.innerHTML = "";
 
     for(let i=0;i<text.length;i++){
 
-        element.innerHTML =
+        el.innerHTML =
             text.substring(0,i+1) +
             "<span class='typing'></span>";
 
         await sleep(speed);
     }
 
-    element.innerHTML = text;
+    el.innerHTML = text;
+}
+
+async function runRAG(){
+
+    document.getElementById("pipelineOutput").innerHTML = "";
+    document.getElementById("finalAnswer").innerHTML = "";
+
+    document.querySelectorAll(".kb-item")
+        .forEach(x=>x.classList.remove("active","retrieved"));
+
+    const query =
+        document.getElementById("question").value;
+
+    activateNode(1);
+
+    await typeText(
+        document.getElementById("pipelineOutput"),
+        `USER QUERY RECEIVED:\n\n"${query}"`,
+        15
+    );
+
+    await sleep(1000);
+
+    activateNode(2);
+
+    const fakeEmbedding = [
+        "0.92","0.14","0.77","0.63","0.81",
+        "0.31","0.44","0.99","0.25"
+    ];
+
+    document.getElementById("pipelineOutput").innerHTML =
+        `
+        <strong>Embedding Generated</strong>
+
+        <div class="vector">
+            ${fakeEmbedding.map(v=>`<span>${v}</span>`).join("")}
+        </div>
+
+        <br>
+
+        Query transformed into semantic vector representation.
+        `;
+
+    await sleep(1800);
+
+    activateNode(3);
+
+    const scored = knowledgeBase.map((doc,index)=>({
+        ...doc,
+        index,
+        score: similarity(query,doc.content)
+    }))
+    .sort((a,b)=>b.score-a.score);
+
+    const topDocs = scored.slice(0,3);
+
+    let retrievalHTML = `
+        <strong>Retriever Searching Vector Database...</strong>
+        <br><br>
+    `;
+
+    topDocs.forEach(doc=>{
+
+        document.querySelectorAll(".kb-item")[doc.index]
+            .classList.add("retrieved");
+
+        retrievalHTML += `
+            <div class="kb-item retrieved">
+                <h4>${doc.title}</h4>
+                <p>${doc.content}</p>
+                <div class="score">
+                    Similarity Score: ${doc.score}
+                </div>
+            </div>
+            <br>
+        `;
+    });
+
+    document.getElementById("pipelineOutput").innerHTML =
+        retrievalHTML;
+
+    await sleep(2500);
+
+    activateNode(4);
+
+    const context = topDocs
+        .map(d=>d.content)
+        .join("\n");
+
+    const augmentedPrompt =
+
+`SYSTEM:
+You are an AI assistant.
+
+RETRIEVED CONTEXT:
+${context}
+
+USER QUESTION:
+${query}
+
+TASK:
+Generate a grounded answer using the retrieved context only.`;
+
+    await typeText(
+        document.getElementById("pipelineOutput"),
+        augmentedPrompt,
+        6
+    );
+
+    await sleep(2200);
+
+    activateNode(5);
+
+    const answer =
+
+`Retrieval-Augmented Generation (RAG) reduces hallucinations by allowing the language model to retrieve real external information before generating a response.
+
+Instead of relying only on training data, the retriever searches a vector database for semantically relevant documents. Those retrieved documents are injected into the prompt as context.
+
+Because the LLM now generates responses using grounded external knowledge, the final answer becomes more accurate, factual, and explainable.
+
+This architecture is especially useful for:
+• AI assistants
+• Enterprise search
+• Chatbots
+• Research systems
+• Document Q&A systems`;
+
+    await typeText(
+        document.getElementById("finalAnswer"),
+        answer,
+        14
+    );
 }
 
 </script>
