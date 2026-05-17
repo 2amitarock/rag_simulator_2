@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Future Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family==Orbitron:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07111f;
+      --card: rgba(14, 25, 45, 0.72);
+      --primary: #66f2ff;
+      --secondary: #8b5cf6;
+      --text: #f5f7ff;
+      --muted: #a9b3c7;
+      --border: rgba(255,255,255,0.08);
+      --glow: 0 0 18px rgba(102, 242, 255, 0.35);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, #10284f, #07111f 45%), #07111f;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 40px;
+    }
+
+    .background-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      animation: pulse 8s infinite alternate;
+    }
+
+    .glow {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: rgba(102, 242, 255, 0.08);
+      filter: blur(80px);
+      z-index: -1;
+    }
+
+    .glow.one {
+      top: -100px;
+      left: -100px;
+    }
+
+    .glow.two {
+      bottom: -100px;
+      right: -100px;
+      background: rgba(139, 92, 246, 0.12);
+    }
+
+    .resume {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 28px;
+    }
+
+    .panel {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--glow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(102,242,255,0.5), rgba(139,92,246,0.3));
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .sidebar {
+      padding: 32px 28px;
+    }
+
+    .profile {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      margin: auto;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 700;
+      color: #04101f;
+      font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 0 30px rgba(102,242,255,0.45);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      margin-top: 18px;
+      letter-spacing: 1px;
+    }
+
+    .tagline {
+      color: var(--primary);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .description {
+      margin-top: 16px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .section {
+      margin-top: 32px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--primary);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      letter-spacing: 1.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 24px;
+      height: 2px;
+      background: linear-gradient(to right, var(--primary), transparent);
+    }
+
+    .info-list,
+    .skills-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .info-item,
+    .skill {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 14px;
+      border-radius: 16px;
+    }
+
+    .info-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .skill-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      width: 0;
+      transition: width 1.2s ease;
+    }
+
+    .main {
+      padding: 36px;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 34px;
+    }
+
+    .hero-card {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .hero-card h2 {
+      font-size: 2.3rem;
+      font-family: 'Orbitron', sans-serif;
+      line-height: 1.2;
+    }
+
+    .hero-card p {
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .status-box {
+      width: 220px;
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(102,242,255,0.15), rgba(139,92,246,0.18));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .status-box h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      color: var(--primary);
+    }
+
+    .status-box p {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10px;
+      width: 2px;
+      height: 100%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 0 18px rgba(102,242,255,0.45);
+    }
+
+    .timeline-item h4 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item small {
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+
+    .timeline-item p {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .project-card {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(102,242,255,0.4);
+    }
+
+    .project-card h4 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .project-card p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    .footer {
+      margin-top: 34px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @keyframes pulse {
+      from {
+        opacity: 0.35;
+      }
+      to {
+        opacity: 0.8;
+      }
+    }
+
+    @media (max-width: 950px) {
+      .resume {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        flex-direction: column;
+      }
+
+      .status-box {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px;
+      }
+
+      .main,
+      .sidebar {
+        padding: 24px;
+      }
+
+      .hero-card h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-grid"></div>
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+
+  <div class="resume">
+    <aside class="panel sidebar">
+      <div class="profile">
+        <div class="avatar">Y</div>
+        <h1>Your Name</h1>
+        <p class="tagline">Student • Creative Thinker • Future Builder</p>
+        <p class="description">
+          Motivated and creative student with a strong interest in storytelling,
+          technology, design, and building futuristic experiences.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Contact</div>
+        <div class="info-list">
+          <div class="info-item">
+            Email
+            <span>yourname@email.com</span>
+          </div>
+          <div class="info-item">
+            Location
+            <span>London, United Kingdom</span>
+          </div>
+          <div class="info-item">
+            Portfolio
+            <span>yourwebsite.dev</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Core Skills</div>
+        <div class="skills-list">
+          <div class="skill">
+            <div class="skill-header">
+              <span>Creative Writing</span>
+              <span>95%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" data-width="95%"></div></div>
+          </div>
+
+          <div class="skill">
+            <div class="skill-header">
+              <span>HTML / CSS</span>
+              <span>88%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" data-width="88%"></div></div>
+          </div>
+
+          <div class="skill">
+            <div class="skill-header">
+              <span>JavaScript</span>
+              <span>78%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" data-width="78%"></div></div>
+          </div>
+
+          <div class="skill">
+            <div class="skill-header">
+              <span>Problem Solving</span>
+              <span>91%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" data-width="91%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Achievements</div>
+        <div class="info-list">
+          <div class="info-item">
+            School Writing Contest
+            <span>Created original animal-based story concepts and character arcs.</span>
+          </div>
+
+          <div class="info-item">
+            Web Design Projects
+            <span>Built responsive and futuristic front-end experiences.</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="panel main">
+      <section class="hero">
+        <div class="hero-card">
+          <h2>Designing ideas for the next generation.</h2>
+          <p>
+            I combine creativity, storytelling, and technology to create engaging
+            digital experiences. My focus is on innovation, futuristic design,
+            and building projects that stand out visually and technically.
+          </p>
+        </div>
+
+        <div class="status-box">
+          <h3>Current Focus</h3>
+          <p>
+            • Front-end development<br>
+            • Creative storytelling<br>
+            • Futuristic UI design<br>
+            • Interactive web experiences
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Education & Experience</div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <small>2025 — Present</small>
+            <h4>Independent Creative Developer</h4>
+            <p>
+              Designing modern user interfaces, experimenting with animations,
+              and developing futuristic web layouts using HTML, CSS, and JavaScript.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <small>2024 — Present</small>
+            <h4>Student Writer & Story Creator</h4>
+            <p>
+              Developed structured stories featuring original characters,
+              imaginative world-building, and engaging narratives for competitions.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <small>Future Goal</small>
+            <h4>Technology & Creative Innovation</h4>
+            <p>
+              Aspiring to create immersive digital experiences that blend
+              design, storytelling, and interactive technology.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Highlighted Projects</div>
+
+        <div class="projects">
+          <div class="project-card">
+            <h4>Future Resume UI</h4>
+            <p>
+              A glassmorphism-inspired personal resume featuring animated skill
+              bars, responsive layouts, and neon cyber aesthetics.
+            </p>
+          </div>
+
+          <div class="project-card">
+            <h4>Interactive Story Concepts</h4>
+            <p>
+              Crafted imaginative stories with dynamic characters, villains,
+              and emotional storytelling for school competitions.
+            </p>
+          </div>
+
+          <div class="project-card">
+            <h4>Modern Portfolio Experiments</h4>
+            <p>
+              Explored futuristic animations, hover effects, and clean visual
+              structures to improve user engagement.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        Built with HTML, CSS & JavaScript • Futuristic Resume Concept
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const fills = document.querySelectorAll('.skill-fill');
+
+    window.addEventListener('load', () => {
+      fills.forEach(fill => {
+        fill.style.width = fill.dataset.width;
+      });
+    });
+
+    const cards = document.querySelectorAll('.project-card');
+
+    cards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(102,242,255,0.15), rgba(255,255,255,0.03))`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.background = 'rgba(255,255,255,0.03)';
+      });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      const glowOne = document.querySelector('.glow.one');
+      const glowTwo = document.querySelector('.glow.two');
+
+      glowOne.style.transform = `translate(${e.clientX * 0.02}px, ${e.clientY * 0.02}px)`;
+      glowTwo.style.transform = `translate(-${e.clientX * 0.02}px, -${e.clientY * 0.02}px)`;
+    });
+  </script>
+</body>
+</html>
